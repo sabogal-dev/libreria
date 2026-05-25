@@ -1,38 +1,60 @@
 # Proyecto Librería
 
-## Programación Orientada a Objetos
-**Universidad Tecnológica de Santander (UTS)**  
-**Autor:** David Emilio Sabogal Herreño  
-**Corte 3 – 2026**
+**Proyecto del Taller de Programación Orientada a Objetos**  
+Tecnología en Desarrollo de Sistemas Informáticos  
+📅 I Semestre 2026  
+👨‍🏫 Profesor: Mag. Carlos Adolfo Beltrán Castro  
+👨‍💻 Estudiantes: David Emilio Sabogal Herreño - 1101752634  
 
----
+![Captura de pantalla](screenshot.png)
+*Imagen de Pantalla Inicial con Menú del Proyecto*
 
-## Descripción
+## 🚀 Descripción del Proyecto
 
-Aplicación Java de escritorio (Swing) para la gestión de una librería. Permite administrar **libros**, **autores** y **préstamos** conectándose a una base de datos SQLite local.
+Este proyecto simula un sistema de gestión de una librería con **Java SE – Swing** y base de datos **SQLite**. Incluye navegación entre diferentes secciones y la funcionalidad de consulta y registro de **Libros**, **Autores**, **Usuarios** y **Préstamos**. La arquitectura sigue el patrón **DAO (Data Access Object)** para separar la lógica de base de datos de la interfaz gráfica, aplicando los principios de encapsulamiento de la Programación Orientada a Objetos.
 
-## Funcionalidades
+## 📂 Estructura del Proyecto
 
-- **Panel de inicio** con estadísticas (total de libros, total prestados, media de calificación)
-- **Listado de libros** con ID, título, género, calificación y estado
-- **Listado de autores** con conteo de libros por autor
-- **Módulo de préstamos**:
-  - Ver todos los préstamos con detalle de libro y usuario
-  - Registrar nuevos préstamos seleccionando libro y usuario
-  - Cambio automático de estado del libro a "Prestado"
-- **Gestión de usuarios** registrados en el sistema
+- **Menú Principal** con estadísticas y listados:
+  - Panel de inicio con total de libros, total prestados y media de calificación
+  - Tabla de libros (ID, título, género, calificación, estado)
+  - Tabla de autores (ID, nombre, nacionalidad, cantidad de libros)
+- **Préstamos** – Consulta de todos los préstamos y registro de nuevos préstamos con selección de libro y usuario
+- **Usuarios** – Gestión de usuarios registrados en el sistema
+- **Salir** – Cierre de la aplicación
 
+## 🧰 Lista de Tecnologías Usadas
 
-## Tecnologías
+| Tecnología | Uso |
+|-----------|-----|
+| **Java 8+** | Lenguaje de programación principal |
+| **Swing** | Framework de interfaz gráfica (GUI) |
+| **SQLite** | Base de datos local embebida |
+| **JDBC** | Conexión a base de datos sin ORM |
+| **NetBeans** | IDE de desarrollo y construcción (Apache Ant) |
+| **Git** | Control de versiones |
 
-- **Java 8+** (Swing para la GUI)
-- **SQLite** (base de datos local, archivo `.db`)
+## 🔧 Instalación y ejecución
 
+1. Clonar o descomprimir el proyecto
+2. Abrir el proyecto en **Apache NetBeans** (`File → Open Project`)
+3. Limpiar y construir (`Run → Clean and Build Project`)
+4. Ejecutar la clase principal: `uts.poo.vista.MenuPrincipal`
 
-## Ejecución
+> La base de datos SQLite se crea automáticamente en la raíz del proyecto con las tablas necesarias y datos de ejemplo al iniciar la aplicación por primera vez.
 
-1. Abrir el proyecto en NetBeans
-2. Limpiar y construir (_Clean and Build_)
-3. Ejecutar la clase principal: `uts.poo.vista.MenuPrincipal`
+## 📁 Paquetes del Proyecto
 
-La base de datos se crea automáticamente en la raíz del proyecto con tablas y datos de ejemplo al iniciar la aplicación por primera vez.
+```
+src/uts/poo/
+├── Libro.java            → Clase modelo: Libro
+├── Usuario.java          → Clase modelo: Usuario
+├── ConexionBD.java       → Gestor de conexión e inicialización del esquema
+├── LibroDAO.java         → Operaciones CRUD de libros
+├── AutorDAO.java         → Consultas de autores con conteo de libros
+├── UsuarioDAO.java       → Operaciones CRUD de usuarios
+├── PrestamoDAO.java      → Operaciones de préstamos con transacciones
+└── vista/
+    ├── MenuPrincipal.java        → Ventana principal con estadísticas y tablas
+    ├── VistaPrestamos.java       → Diálogo de lista de préstamos
+    └── VistaNuevoPrestamo.java   → Diálogo para registrar nuevo préstamo
