@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package uts.poo;
 
 import java.sql.Connection;
@@ -13,19 +9,21 @@ import java.util.List;
 
 /**
  * Clase DAO (Data Access Object) para la entidad Libro.
- * Encapsula todas las operaciones de base de datos relacionadas con libros.
+ * Encapsula todas las operaciones CRUD y consultas relacionadas con libros.
+ * Soporta soft-delete mediante columna "activo".
  * @author emilio
  */
 public class LibroDAO {
 
     /**
-     * Obtiene todos los libros de la base de datos.
+     * Obtiene todos los libros activos de la base de datos.
      * @return Lista de objetos Libro
      * @throws SQLException si hay error de BD
      */
     public List<Libro> obtenerTodos() throws SQLException {
         List<Libro> libros = new ArrayList<>();
-        String sql = "SELECT id, titulo, genero, calificacion, estado FROM libros ORDER BY id";
+        String sql = "SELECT id, titulo, genero, calificacion, estado, autor_id "
+                + "FROM libros WHERE activo = 1 ORDER BY id";
 
         try (Connection con = ConexionBD.getConnection();
              PreparedStatement pst = con.prepareStatement(sql);
@@ -38,6 +36,7 @@ public class LibroDAO {
                 l.setGenero(rs.getString("genero"));
                 l.setCalificacion(rs.getDouble("calificacion"));
                 l.setEstado(rs.getString("estado"));
+                l.setAutorId(rs.getInt("autor_id"));
                 libros.add(l);
             }
         }
@@ -45,13 +44,13 @@ public class LibroDAO {
     }
 
     /**
-     * Obtiene solo los libros que están disponibles para préstamo.
+     * Obtiene solo los libros activos que están disponibles para préstamo.
      * @return Lista de objetos Libro con estado "Disponible"
      * @throws SQLException si hay error de BD
      */
     public List<Libro> obtenerDisponibles() throws SQLException {
         List<Libro> libros = new ArrayList<>();
-        String sql = "SELECT id, titulo, estado FROM libros WHERE estado = 'Disponible' ORDER BY titulo";
+        String sql = "SELECT id, titulo, estado FROM libros WHERE activo = 1 AND estado = 'Disponible' ORDER BY titulo";
 
         try (Connection con = ConexionBD.getConnection();
              PreparedStatement pst = con.prepareStatement(sql);
@@ -66,6 +65,55 @@ public class LibroDAO {
             }
         }
         return libros;
+    }
+
+    /**
+     * Crea un nuevo libro en la base de datos.
+     * @param libro Objeto Libro con título, género, calificación y autorId
+     * @throws SQLException si hay error de BD
+     */
+    public void crear(Libro libro) throws SQLException {
+        String sql = "INSERT INTO libros (titulo, genero, calificacion, autor_id) VALUES (?, ?, ?, ?)";
+        try (Connection con = ConexionBD.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setString(1, libro.getTitulo());
+            pst.setString(2, libro.getGenero());
+            pst.setDouble(3, libro.getCalificacion());
+            pst.setInt(4, libro.getAutorId());
+            pst.executeUpdate();
+        }
+    }
+
+    /**
+     * Actualiza los datos de un libro existente.
+     * @param libro Objeto Libro con id, título, género, calificación y autorId
+     * @throws SQLException si hay error de BD
+     */
+    public void actualizar(Libro libro) throws SQLException {
+        String sql = "UPDATE libros SET titulo = ?, genero = ?, calificacion = ?, autor_id = ? WHERE id = ?";
+        try (Connection con = ConexionBD.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setString(1, libro.getTitulo());
+            pst.setString(2, libro.getGenero());
+            pst.setDouble(3, libro.getCalificacion());
+            pst.setInt(4, libro.getAutorId());
+            pst.setInt(5, libro.getId());
+            pst.executeUpdate();
+        }
+    }
+
+    /**
+     * Archiva un libro (soft-delete: activo = 0).
+     * @param id ID del libro a archivar
+     * @throws SQLException si hay error de BD
+     */
+    public void archivar(int id) throws SQLException {
+        String sql = "UPDATE libros SET activo = 0 WHERE id = ?";
+        try (Connection con = ConexionBD.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setInt(1, id);
+            pst.executeUpdate();
+        }
     }
 
     /**

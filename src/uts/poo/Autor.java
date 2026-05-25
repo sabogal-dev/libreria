@@ -1,50 +1,49 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package uts.poo;
 
 /**
- * Clase que representa un Autor de libros.
+ * Clase que representa un Autor en la librería.
  * @author emilio
  */
-public class Autor extends Persona {
-    private String fechaNacimiento;
-    private int librosEscritos;
+public class Autor {
+    private int id;
+    private String nombre;
+    private String nacionalidad;
 
     public Autor() {
     }
 
-    public Autor(int id, String nombre, String nacionalidad, String fechaNacimiento, int librosEscritos) {
-        super(id, nombre, nacionalidad);
-        this.fechaNacimiento = fechaNacimiento;
-        this.librosEscritos = librosEscritos;
+    public Autor(int id, String nombre, String nacionalidad) {
+        this.id = id;
+        this.nombre = nombre;
+        this.nacionalidad = nacionalidad;
     }
 
-    public String getFechaNacimiento() {
-        return fechaNacimiento;
+    public int getId() {
+        return id;
     }
 
-    public void setFechaNacimiento(String fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public int getLibrosEscritos() {
-        return librosEscritos;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setLibrosEscritos(int librosEscritos) {
-        this.librosEscritos = librosEscritos;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getNacionalidad() {
+        return nacionalidad;
+    }
+
+    public void setNacionalidad(String nacionalidad) {
+        this.nacionalidad = nacionalidad;
     }
 
     @Override
     public String toString() {
-        return "Autor{" +
-                "id=" + getId() +
-                ", nombre='" + getNombre() + '\'' +
-                ", nacionalidad='" + getNacionalidad() + '\'' +
-                ", fechaNacimiento='" + fechaNacimiento + '\'' +
-                ", librosEscritos=" + librosEscritos +
-                '}';
+        return nombre;
     }
 }

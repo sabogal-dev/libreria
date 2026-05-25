@@ -36,13 +36,15 @@ public class ConexionBD {
                 + "genero TEXT,"
                 + "calificacion REAL DEFAULT 0,"
                 + "estado TEXT DEFAULT 'Disponible',"
-                + "autor_id INTEGER"
+                + "autor_id INTEGER,"
+                + "activo INTEGER DEFAULT 1"
                 + ")";
 
         String sqlAutores = "CREATE TABLE IF NOT EXISTS autores ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "nombre TEXT NOT NULL,"
-                + "nacionalidad TEXT"
+                + "nacionalidad TEXT,"
+                + "activo INTEGER DEFAULT 1"
                 + ")";
 
         String sqlUsuarios = "CREATE TABLE IF NOT EXISTS usuarios ("
@@ -50,7 +52,8 @@ public class ConexionBD {
                 + "nombre TEXT NOT NULL,"
                 + "nacionalidad TEXT,"
                 + "email TEXT,"
-                + "telefono TEXT"
+                + "telefono TEXT,"
+                + "clave TEXT NOT NULL DEFAULT '1234'"
                 + ")";
 
         String sqlPrestamos = "CREATE TABLE IF NOT EXISTS prestamos ("
@@ -93,8 +96,10 @@ public class ConexionBD {
                 + "('Homero', 'Griego')");
 
         // Usuarios
-        stmt.execute("INSERT INTO usuarios (nombre, nacionalidad, email, telefono) VALUES "
-                + "('David Sabogal', 'Colombiano', 'desabogal@uts.edu.co', '3195477153')");
+        stmt.execute("INSERT INTO usuarios (nombre, nacionalidad, email, telefono, clave) VALUES "
+                + "('David Sabogal', 'Colombiano', 'desabogal@uts.edu.co', '3195477153', '1234'),"
+                + "('Admin', 'Colombiano', 'admin@uts.edu.co', '3000000000', 'admin'),"
+                + "('Juan Perez', 'Colombiano', 'juan@uts.edu.co', '3112223344', '5678')");
 
         // Libros
         stmt.execute("INSERT INTO libros (titulo, genero, calificacion, estado, autor_id) VALUES "

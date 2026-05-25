@@ -18,11 +18,16 @@ Este proyecto simula un sistema de gestión de una librería con **Java SE – S
 
 ## 📂 Estructura del Proyecto
 
+- **Login** – Pantalla de autenticación con usuario y clave (aparece al iniciar)
 - **Menú Principal** con estadísticas y listados:
   - Panel de inicio con total de libros, total prestados y media de calificación
   - Tabla de libros (ID, título, género, calificación, estado)
   - Tabla de autores (ID, nombre, nacionalidad, cantidad de libros)
 - **Préstamos** – Consulta de todos los préstamos y registro de nuevos préstamos con selección de libro y usuario
+- **Mis Préstamos** – Historial de préstamos del usuario autenticado con:
+  - Contador de préstamos activos y atrasados (en rojo)
+  - Alerta automática si hay préstamos atrasados
+  - Botón para devolver préstamos propios
 - **Usuarios** – Gestión de usuarios registrados en el sistema
 - **Salir** – Cierre de la aplicación
 
@@ -46,6 +51,20 @@ Este proyecto simula un sistema de gestión de una librería con **Java SE – S
 
 > La base de datos SQLite se crea automáticamente en la raíz del proyecto con las tablas necesarias y datos de ejemplo al iniciar la aplicación por primera vez.
 
+### Crear la base de datos manualmente (alternativa)
+
+Si se desea crear la base de datos sin ejecutar la aplicación, usar el script `schema.sql`:
+
+```bash
+# En Windows (descargar sqlite3.exe de https://www.sqlite.org/download.html)
+sqlite3 libreria.db < schema.sql
+
+# En Linux/Mac
+sqlite3 libreria.db < schema.sql
+```
+
+El script crea las tablas `autores`, `libros`, `usuarios` y `prestamos` con su estructura completa. Los datos de ejemplo están comentados al final del script.
+
 ## 📁 Paquetes del Proyecto
 
 ```
@@ -59,5 +78,7 @@ src/uts/poo/
 ├── PrestamoDAO.java      → Operaciones de préstamos con transacciones
 └── vista/
     ├── MenuPrincipal.java        → Ventana principal con estadísticas y tablas
+    ├── VistaLogin.java          → Diálogo de autenticación (login)
     ├── VistaPrestamos.java       → Diálogo de lista de préstamos
-    └── VistaNuevoPrestamo.java   → Diálogo para registrar nuevo préstamo
+    ├── VistaNuevoPrestamo.java   → Diálogo para registrar nuevo préstamo
+    └── VistaMisPrestamos.java   → Diálogo del historial de préstamos del usuario

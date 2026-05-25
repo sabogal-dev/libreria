@@ -11,14 +11,16 @@ package uts.poo;
 public class Usuario extends Persona {
     private String email;
     private String telefono;
+    private String clave;
 
     public Usuario() {
     }
 
-    public Usuario(int id, String nombre, String nacionalidad, String email, String telefono) {
+    public Usuario(int id, String nombre, String nacionalidad, String email, String telefono, String clave) {
         super(id, nombre, nacionalidad);
         this.email = email;
         this.telefono = telefono;
+        this.clave = clave;
     }
 
     public String getEmail() {
@@ -35,6 +37,14 @@ public class Usuario extends Persona {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public String getClave() {
+        return clave;
+    }
+
+    public void setClave(String clave) {
+        this.clave = clave;
     }
 
     @Override

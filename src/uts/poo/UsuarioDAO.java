@@ -40,4 +40,35 @@ public class UsuarioDAO {
         }
         return usuarios;
     }
+
+    /**
+     * Autentica un usuario por nombre y clave (texto plano).
+     * @param nombre Nombre del usuario
+     * @param clave  Clave en texto plano
+     * @return Usuario autenticado, o null si falla
+     * @throws SQLException si hay error de BD
+     */
+    public Usuario autenticar(String nombre, String clave) throws SQLException {
+        String sql = "SELECT id, nombre, nacionalidad, email, telefono, clave FROM usuarios WHERE nombre = ? AND clave = ?";
+
+        try (Connection con = ConexionBD.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setString(1, nombre);
+            pst.setString(2, clave);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return new Usuario(
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getString("nacionalidad"),
+                        rs.getString("email"),
+                        rs.getString("telefono"),
+                        rs.getString("clave")
+                    );
+                }
+            }
+        }
+        return null;
+    }
 }

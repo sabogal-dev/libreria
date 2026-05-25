@@ -12,6 +12,7 @@ import uts.poo.ConexionBD;
 import uts.poo.Libro;
 import uts.poo.LibroDAO;
 import uts.poo.PrestamoDAO;
+import uts.poo.Usuario;
 
 /**
  * Menú principal de la aplicación de librería.
@@ -22,11 +23,13 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private final LibroDAO libroDAO;
     private final AutorDAO autorDAO;
     private final PrestamoDAO prestamoDAO;
+    private final Usuario usuarioAutenticado;
 
-    public MenuPrincipal() {
+    public MenuPrincipal(Usuario usuario) {
         this.libroDAO = new LibroDAO();
         this.autorDAO = new AutorDAO();
         this.prestamoDAO = new PrestamoDAO();
+        this.usuarioAutenticado = usuario;
 
         initComponents();
         cargarEstadisticas();
@@ -57,6 +60,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
         menuLibros = new javax.swing.JMenu();
         menuAutores = new javax.swing.JMenu();
         menuPrestamos = new javax.swing.JMenu();
+        menuMisPrestamos = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Libreria - UTS POO");
@@ -147,6 +151,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         jMenuBar2.add(menuPrestamos);
+
+        menuMisPrestamos.setText("Mis Préstamos");
+        menuMisPrestamos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menuMisPrestamosMouseClicked(evt);
+            }
+        });
+        jMenuBar2.add(menuMisPrestamos);
 
         setJMenuBar(jMenuBar2);
 
@@ -271,10 +283,17 @@ public class MenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_menuInicioMouseClicked
 
     private void menuLibrosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuLibrosMouseClicked
+        VistaLibros dialog = new VistaLibros(this, true);
+        dialog.setVisible(true);
+        // Al volver, refrescar
+        cargarEstadisticas();
         cargarTablaLibros();
     }//GEN-LAST:event_menuLibrosMouseClicked
 
     private void menuAutoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuAutoresMouseClicked
+        VistaAutores dialog = new VistaAutores(this, true);
+        dialog.setVisible(true);
+        // Al volver, refrescar
         cargarTablaAutores();
     }//GEN-LAST:event_menuAutoresMouseClicked
 
@@ -285,6 +304,14 @@ public class MenuPrincipal extends javax.swing.JFrame {
         cargarEstadisticas();
         cargarTablaLibros();
     }//GEN-LAST:event_menuPrestamosMouseClicked
+
+    private void menuMisPrestamosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuMisPrestamosMouseClicked
+        VistaMisPrestamos dialog = new VistaMisPrestamos(this, true, usuarioAutenticado);
+        dialog.setVisible(true);
+        // Al volver, refrescar estadísticas y tablas
+        cargarEstadisticas();
+        cargarTablaLibros();
+    }//GEN-LAST:event_menuMisPrestamosMouseClicked
 
     public static void main(String args[]) {
         // Inicializar la base de datos (crea tablas y datos de ejemplo si no existen)
@@ -299,20 +326,21 @@ public class MenuPrincipal extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MenuPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MenuPrincipal().setVisible(true);
+        // Mostrar login primero
+        java.awt.EventQueue.invokeLater(() -> {
+            VistaLogin login = new VistaLogin(null, true);
+            login.setVisible(true);
+
+            // Solo abrir el menú si el login fue exitoso
+            if (login.getUsuarioAutenticado() != null) {
+                new MenuPrincipal(login.getUsuarioAutenticado()).setVisible(true);
+            } else {
+                System.exit(0);
             }
         });
     }
@@ -331,6 +359,7 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenu menuAutores;
     private javax.swing.JMenu menuInicio;
     private javax.swing.JMenu menuLibros;
+    private javax.swing.JMenu menuMisPrestamos;
     private javax.swing.JMenu menuPrestamos;
     private javax.swing.JTable tablaAutores;
     private javax.swing.JTable tablaLibros;

@@ -1,12 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package uts.poo.vista;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.List;
 import javax.swing.JOptionPane;
 import uts.poo.Libro;
@@ -16,7 +13,7 @@ import uts.poo.Usuario;
 import uts.poo.UsuarioDAO;
 
 /**
- * Vista para crear un nuevo préstamo.
+ * Vista para crear un nuevo préstamo con selector de fecha simple (combos año/mes/día).
  * @author emilio
  */
 public class VistaNuevoPrestamo extends javax.swing.JDialog {
@@ -38,14 +35,18 @@ public class VistaNuevoPrestamo extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         jLabelTitulo = new javax.swing.JLabel();
         lblLibro = new javax.swing.JLabel();
-        cmbLibro = new javax.swing.JComboBox();
+        cmbLibro = new javax.swing.JComboBox<>();
         lblUsuario = new javax.swing.JLabel();
-        cmbUsuario = new javax.swing.JComboBox();
+        cmbUsuario = new javax.swing.JComboBox<>();
         lblFechaDevolucion = new javax.swing.JLabel();
-        txtFechaDevolucion = new javax.swing.JTextField();
+        cmbAnio = new javax.swing.JComboBox<>();
+        cmbMes = new javax.swing.JComboBox<>();
+        cmbDia = new javax.swing.JComboBox<>();
+        lblAnio = new javax.swing.JLabel();
+        lblMes = new javax.swing.JLabel();
+        lblDia = new javax.swing.JLabel();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
 
@@ -54,28 +55,52 @@ public class VistaNuevoPrestamo extends javax.swing.JDialog {
         setModal(true);
         setResizable(false);
 
-        jLabelTitulo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabelTitulo.setFont(new java.awt.Font("Tahoma", 1, 14));
         jLabelTitulo.setText("Nuevo Préstamo");
 
         lblLibro.setText("Libro:");
 
         lblUsuario.setText("Usuario:");
 
-        lblFechaDevolucion.setText("Fecha devolución (YYYY-MM-DD):");
+        lblFechaDevolucion.setText("Fecha estimada de devolución:");
+
+        // Cargar años (actual + 2 años hacia adelante)
+        int anioActual = Calendar.getInstance().get(Calendar.YEAR);
+        for (int i = anioActual; i <= anioActual + 2; i++) {
+            cmbAnio.addItem(i);
+        }
+
+        // Cargar meses
+        String[] meses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+        for (int i = 0; i < meses.length; i++) {
+            cmbMes.addItem((i + 1) + " - " + meses[i]);
+        }
+
+        // Cargar días (1-31)
+        for (int i = 1; i <= 31; i++) {
+            cmbDia.addItem(i);
+        }
+
+        // Seleccionar fecha actual por defecto
+        LocalDate hoy = LocalDate.now();
+        cmbAnio.setSelectedItem(hoy.getYear());
+        cmbMes.setSelectedIndex(hoy.getMonthValue() - 1);
+        cmbDia.setSelectedItem(hoy.getDayOfMonth());
+
+        // Listener para ajustar días cuando cambia mes/año
+        cmbAnio.addActionListener(e -> actualizarDias());
+        cmbMes.addActionListener(e -> actualizarDias());
+
+        lblAnio.setText("Año");
+        lblMes.setText("Mes");
+        lblDia.setText("Día");
 
         btnGuardar.setText("Guardar");
-        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardarActionPerformed(evt);
-            }
-        });
+        btnGuardar.addActionListener(e -> btnGuardarActionPerformed());
 
         btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
-            }
-        });
+        btnCancelar.addActionListener(e -> dispose());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -88,13 +113,24 @@ public class VistaNuevoPrestamo extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblLibro)
-                            .addComponent(cmbLibro, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cmbLibro, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblUsuario)
-                            .addComponent(cmbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(cmbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(lblFechaDevolucion)
-                    .addComponent(txtFechaDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lblAnio)
+                            .addComponent(cmbAnio, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lblMes)
+                            .addComponent(cmbMes, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lblDia)
+                            .addComponent(cmbDia, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnGuardar)
                         .addGap(10, 10, 10)
@@ -104,9 +140,9 @@ public class VistaNuevoPrestamo extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(15, 15, 15)
                 .addComponent(jLabelTitulo)
-                .addGap(20, 20, 20)
+                .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblLibro)
                     .addComponent(lblUsuario))
@@ -114,22 +150,57 @@ public class VistaNuevoPrestamo extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmbLibro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20)
+                .addGap(15, 15, 15)
                 .addComponent(lblFechaDevolucion)
                 .addGap(5, 5, 5)
-                .addComponent(txtFechaDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnGuardar)
-                        .addGap(10, 10, 10)
-                        .addComponent(btnCancelar)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblAnio)
+                    .addComponent(lblMes)
+                    .addComponent(lblDia))
+                .addGap(3, 3, 3)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmbAnio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbMes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbDia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnGuardar)
+                    .addComponent(btnCancelar))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * Ajusta los días disponibles en el combo según el mes y año seleccionados.
+     */
+    private void actualizarDias() {
+        int diaSeleccionado = (int) cmbDia.getSelectedItem();
+        int mes = cmbMes.getSelectedIndex() + 1; // 1-12
+        int anio = (int) cmbAnio.getSelectedItem();
+
+        // Calcular días del mes
+        int diasEnMes;
+        if (mes == 2) {
+            // Febrero: bisiesto?
+            diasEnMes = (anio % 4 == 0 && (anio % 100 != 0 || anio % 400 == 0)) ? 29 : 28;
+        } else if (mes == 4 || mes == 6 || mes == 9 || mes == 11) {
+            diasEnMes = 30;
+        } else {
+            diasEnMes = 31;
+        }
+
+        cmbDia.removeAllItems();
+        for (int i = 1; i <= diasEnMes; i++) {
+            cmbDia.addItem(i);
+        }
+        // Restaurar selección si es posible
+        if (diaSeleccionado <= diasEnMes) {
+            cmbDia.setSelectedItem(diaSeleccionado);
+        }
+    }
 
     private void cargarLibros() {
         cmbLibro.removeAllItems();
@@ -157,7 +228,7 @@ public class VistaNuevoPrestamo extends javax.swing.JDialog {
         }
     }
 
-    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+    private void btnGuardarActionPerformed() {
         Libro libroSeleccionado = (Libro) cmbLibro.getSelectedItem();
         Usuario usuarioSeleccionado = (Usuario) cmbUsuario.getSelectedItem();
 
@@ -167,23 +238,20 @@ public class VistaNuevoPrestamo extends javax.swing.JDialog {
             return;
         }
 
-        String fechaDevolucion = txtFechaDevolucion.getText().trim();
-        if (fechaDevolucion.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Debe ingresar la fecha de devolución (YYYY-MM-DD).",
-                    "Validación", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        int anio = (int) cmbAnio.getSelectedItem();
+        int mes = cmbMes.getSelectedIndex() + 1;
+        int dia = (int) cmbDia.getSelectedItem();
 
-        // Validar formato de fecha
-        try {
-            LocalDate.parse(fechaDevolucion, DateTimeFormatter.ISO_LOCAL_DATE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Use YYYY-MM-DD.",
-                    "Validación", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
+        String fechaDevolucion = String.format("%04d-%02d-%02d", anio, mes, dia);
         String fechaPrestamo = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE);
+
+        // Validar que la fecha de devolución no sea anterior a hoy
+        LocalDate devolucion = LocalDate.of(anio, mes, dia);
+        if (devolucion.isBefore(LocalDate.now())) {
+            JOptionPane.showMessageDialog(this, "La fecha de devolución no puede estar en el pasado.",
+                    "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
         try {
             prestamoDAO.crearPrestamo(
@@ -199,21 +267,22 @@ public class VistaNuevoPrestamo extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Error al guardar el préstamo: " + e.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_btnGuardarActionPerformed
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        dispose();
-    }//GEN-LAST:event_btnCancelarActionPerformed
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnGuardar;
-    private javax.swing.JComboBox cmbLibro;
-    private javax.swing.JComboBox cmbUsuario;
+    private javax.swing.JComboBox<Integer> cmbAnio;
+    private javax.swing.JComboBox<Integer> cmbDia;
+    private javax.swing.JComboBox<Libro> cmbLibro;
+    private javax.swing.JComboBox<String> cmbMes;
+    private javax.swing.JComboBox<Usuario> cmbUsuario;
     private javax.swing.JLabel jLabelTitulo;
+    private javax.swing.JLabel lblAnio;
+    private javax.swing.JLabel lblDia;
     private javax.swing.JLabel lblFechaDevolucion;
     private javax.swing.JLabel lblLibro;
+    private javax.swing.JLabel lblMes;
     private javax.swing.JLabel lblUsuario;
-    private javax.swing.JTextField txtFechaDevolucion;
     // End of variables declaration//GEN-END:variables
 }
