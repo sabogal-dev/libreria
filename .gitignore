@@ -1,0 +1,14 @@
+# Base de datos SQLite (se regenera automáticamente al iniciar la app)
+*.db
+
+# Archivos compilados de Java
+build/
+dist/
+*.class
+
+# Archivos de NetBeans (privados)
+nbproject/private/
+
+# Archivos temporales
+*.tmp
+*.log

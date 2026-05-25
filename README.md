@@ -6,8 +6,11 @@ Tecnología en Desarrollo de Sistemas Informáticos
 👨‍🏫 Profesor: Mag. Carlos Adolfo Beltrán Castro  
 👨‍💻 Estudiantes: David Emilio Sabogal Herreño - 1101752634  
 
-![Captura de pantalla](screenshot.png)
-*Imagen de Pantalla Inicial con Menú del Proyecto*
+![Pantalla de la aplicación](aplicacion.png)
+*Imagen de la Pantalla Inicial con Menú del Proyecto*
+
+![Diagrama de clases](diagrama.png)
+*Diagrama de Clases del Proyecto*
 
 ## 🚀 Descripción del Proyecto
 
